@@ -28,7 +28,6 @@ services:
   - type: web
     name: crop-advisor-api
     runtime: python
-    plan: free
     region: singapore            # closest free region to Dakshina Kannada / India
     branch: main
     rootDir: backend
@@ -62,7 +61,6 @@ services:
   - type: web
     name: crop-advisor-static
     runtime: static
-    plan: free
     branch: main
     rootDir: frontend
     buildCommand: "echo 'No build step: the front-end is plain HTML/CSS/ES5-compatible JS, so it deploys as-is.'"
