@@ -1,0 +1,38 @@
+# License
+
+## Code
+
+Copyright © 2026 the Crop Advisor authors (academic project).
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+associated documentation files (the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+1. The above copyright notice and this permission notice shall be included in all copies or
+   substantial portions of the Software.
+2. **Academic attribution.** Any academic use — a report, paper, poster, thesis or submission —
+   must cite this project. Where the Software is modified, the modified version must not present
+   itself as the original, and the derivation must be stated.
+3. **No warranty of agronomic fitness.** The Software produces indicative crop suggestions and is
+   not a substitute for professional agricultural extension advice. It is provided "AS IS", without
+   warranty of any kind, express or implied, including but not limited to the warranties of
+   merchantability, fitness for a particular purpose and noninfringement. In no event shall the
+   authors be liable for any claim, damages or other liability arising from the use of the Software,
+   including crop loss, financial loss, or water or fertiliser misuse.
+
+## Third-party data and content (NOT covered by the licence above)
+
+| Item | Owner / terms |
+|---|---|
+| `backend/data/secondary/crop_recommendation.csv` | Kaggle *Crop Recommendation Dataset* by **atharvaingle**. Used here for non-commercial academic work with attribution; re-fetch any time with `python scripts/download_secondary_dataset.py --download`. The dataset's own terms govern it. |
+| Crop agronomy ranges in `backend/app/ml/knowledge.py` | Compiled from **TNAU Agritech Portal / Crop Production Guide**, ICAR package-of-practices and **KVK Dakshina Kannada** publications. Figures are quoted with their sources in the app and in the report; copyright remains with the originating institutions. |
+| District statistics (rainfall, soil types, crop areas) | **KVK Dakshina Kannada** district profile and annual report; **KSNDMC/NRDMS** Dakshina Kannada natural-resource report. |
+| Reviewed papers listed on the Project Comparison page | Their respective publishers. Accuracy figures are quoted, attributed and marked as the authors' own claims; nothing from a paywalled source is reproduced beyond a short factual figure. |
+
+## Fonts and assets
+
+No external fonts, icon packs or CDN libraries are used: the UI draws its own SVG icons and charts
+and uses system font stacks. The screenshots in `docs/screenshots/` are generated from this
+project's own UI on seeded demo data and may be reused in the project report.

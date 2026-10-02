@@ -1,0 +1,40 @@
+# --- Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- local env / secrets
+.env
+.env.local
+*.env.private
+
+# --- local databases (the deployed app uses hosted Postgres instead)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+backend/data/crop_advisor.db*
+
+# --- OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# --- scratch
+/tmp/
+scratch/
+*.log
+
+# NOTE — deliberately NOT ignored (the free-tier deployment depends on them):
+#   backend/data/secondary/crop_recommendation.csv   the 150 KB free secondary dataset
+#   backend/data/derived/derived_dataset.csv         the mapped dataset shown in the UI
+#   backend/data/models/best_model.joblib            the ~0.7 MB trained model
+#   backend/data/models/metrics.json                 the metrics the UI reports

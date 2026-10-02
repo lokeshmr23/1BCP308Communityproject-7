@@ -1,0 +1,80 @@
+# ---------------------------------------------------------------------------
+# Render Blueprint — 100% free tier, academic use
+#
+#   * crop-advisor-api    : type: web, runtime: python, plan: free
+#                           runs gunicorn (Flask serves BOTH the REST API and the SPA)
+#   * crop-advisor-static : type: web, runtime: static, plan: free
+#                           serves the same front-end files from Render's CDN
+#
+# NOTE ON RUNTIME KEYS (a common mistake this file avoids):
+#   * a Python web service must be  `type: web` + `runtime: python` + `plan: free`.
+#   * a static site must be         `type: web` + `runtime: static` + `plan: free`.
+#     Render has no "type: static" — writing that is invalid and the Blueprint fails.
+#
+# PERSISTENCE: Render's free disk is EPHEMERAL (deleted on every deploy/restart, and the
+# service spins down after idle). So DATABASE_URL must point at a FREE HOSTED POSTGRES
+# (Neon or Supabase). Without it the app falls back to SQLite on ephemeral disk and all
+# users/predictions/surveys are lost on the next deploy.
+#
+#   Neon     : postgresql://USER:PASSWORD@ep-xxx.region.aws.neon.tech/neondb?sslmode=require
+#   Supabase : postgresql://postgres:PASSWORD@db.xxxx.supabase.co:5432/postgres
+#
+# The trained model (~0.7 MB) is committed to the repo and lazy-loaded on the first
+# prediction, so cold starts stay short and nothing important lives on the ephemeral disk.
+# ---------------------------------------------------------------------------
+
+services:
+  # ---------------------------------------------------------------- Python API + SPA
+  - type: web
+    name: crop-advisor-api
+    runtime: python
+    plan: free
+    region: singapore            # closest free region to Dakshina Kannada / India
+    branch: main
+    rootDir: backend
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt && python -m app.ml.train"
+    startCommand: "gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 60 --log-file -"
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATABASE_URL
+        sync: false              # paste your Neon/Supabase connection string in the dashboard
+      - key: JWT_SECRET
+        generateValue: true      # Render generates a strong secret
+      - key: JWT_EXPIRES_HOURS
+        value: "24"
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: BOOTSTRAP_ADMIN_EMAIL
+        value: admin@cropadvisor.in
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false              # set a real value; then run the seed script once
+      - key: WARM_MODEL
+        value: "0"               # keep cold start fast; the model lazy-loads on first request
+      - key: LOG_LEVEL
+        value: INFO
+      - key: DEFAULT_LOCALE
+        value: en
+
+  # ---------------------------------------------------------------- static front-end
+  - type: web
+    name: crop-advisor-static
+    runtime: static
+    plan: free
+    branch: main
+    rootDir: frontend
+    buildCommand: "echo 'No build step: the front-end is plain HTML/CSS/ES5-compatible JS, so it deploys as-is.'"
+    staticPublishPath: .
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-store
+    envVars:
+      - key: UI_NOTE
+        value: "Static copy of the SPA. The full app (API + UI on one origin) is crop-advisor-api."
